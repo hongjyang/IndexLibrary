@@ -19,8 +19,8 @@ package com.dingptech.indexslibrary;
              |       |
              |       |
 */
-public class Text {
-    public double add(double num1, double num2) {
+public class Test {
+    public static double add(double num1, double num2) {
         return num1 + num2;
     }
 }
