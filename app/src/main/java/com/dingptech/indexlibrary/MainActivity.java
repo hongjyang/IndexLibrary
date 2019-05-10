@@ -4,6 +4,7 @@ import android.content.Context;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.View;
 
 import com.dingptech.indexslibrary.BaseViewHolder;
@@ -13,6 +14,7 @@ import com.dingptech.indexslibrary.LetterIndexView;
 import com.dingptech.indexslibrary.ListSort;
 import com.dingptech.indexslibrary.TextBean;
 import com.dingptech.indexslibrary.TopLayoutManager;
+import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,7 +24,7 @@ public class MainActivity extends AppCompatActivity {
     private RecyclerView rv;
     private LetterIndexView letterIndexView;
     private List<String> list = new ArrayList();
-
+    private List<TextBean> list1 = new ArrayList();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -31,16 +33,17 @@ public class MainActivity extends AppCompatActivity {
         rv = findViewById(R.id.rv);
         letterIndexView = findViewById(R.id.liv);
         lisadd();
-        ListSort.sort(list);
-        PersonAdapter adapter = new PersonAdapter(this, ListSort.list(), R.layout.person_recycler_item);
+        list1= ListSort.sort(list);
+        Log.e("hjy",new Gson().toJson( ListSort.list()) );
+        PersonAdapter adapter = new PersonAdapter(this, list1, R.layout.person_recycler_item);
         rv.setAdapter(adapter);
         TopLayoutManager manager = new TopLayoutManager(this, TopLayoutManager.VERTICAL, false);
         rv.setLayoutManager(manager);
         letterIndexView.setOnLetterTouchListener(new IndexTouchListener() {
             @Override
             public void onTouch(String letter, boolean isTouch) {
-                for (int i = 0; i < ListSort.list().size(); i++) {
-                    if (letter.equals(ListSort.list().get(i).getPinyin().charAt(0) + "")) {
+                for (int i = 0; i < list1.size(); i++) {
+                    if (letter.equals(list1.get(i).getPinyin().charAt(0) + "")) {
                         rv.smoothScrollToPosition(i);
                         break;
                     }
@@ -57,8 +60,9 @@ public class MainActivity extends AppCompatActivity {
         @Override
         protected void convert(BaseViewHolder holder, TextBean person, int position) {
             String currentWord = person.getPinyin().charAt(0) + "";
+            Log.e("hjy", currentWord );
             if (position > 0) {
-                String lastWord = ListSort.list().get(position - 1).getPinyin().charAt(0) + "";
+                String lastWord = list1.get(position - 1).getPinyin().charAt(0) + "";
                 //拿当前的首字母和上一个首字母比较,与首字母相同，需要隐藏当前item的索引
                 holder.setVisibility(R.id.indexTv, currentWord.equals(lastWord) ? View.GONE : View.VISIBLE);
             } else {
